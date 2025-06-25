@@ -1,0 +1,107 @@
+import User from "../models/user.js";
+export const userRegister = async (req,res)=>{
+    const {name , email, phone, password, userId}= req.body;
+    try {
+        const existingUser = await User.findOne({email});
+        if(existingUser){
+          return res.status(404).json({
+            message:"User already existed"
+          })
+        } 
+        const user = new User({
+            name,
+            email,
+            phone,
+            password,
+            userId
+        });
+        await user.save();
+        return res.status(201).json({
+            message:"User registered successfully",
+            user
+        })  
+    } catch (error) {
+        res.status(500).json({
+            message:"Server error",
+            error:error.message,
+        })
+    }
+}
+
+export const userLogin = async (req,res)=>{
+    const {email,password}= req.body;
+    try {
+        const user = await User.findOne({email});
+        if(!user){
+          return res.status(404).json({
+            message:"User not found, please register first"
+          })
+        } 
+        if(password==user.password){
+          return res.status(200).json({
+            message:"logged in successfully",
+            user
+        })
+        }else
+        {
+          return res.status(404).json({
+            message:"incorrect password",
+        })  
+        }
+    } catch (error) {
+        res.status(500).json({
+            message:"Server error",
+            error:error.message,
+        })
+    }
+}
+
+export const getAllUsers = async (req,res) =>{
+      try {
+        const users= await User.find();
+      if(!users){
+         return res.status(200).json({message: "The user is empty"});
+      }
+      return res.status(200).json({
+         message:"all users",
+         users
+      })
+      } catch (error) {
+          return res.status(500).json({message:"Internal error"})
+      }
+     
+}
+
+export const updateUsers= async (req,res)=>{
+      const { _id }= req.params;
+      const {name} = req.body;
+      try{
+      const user = await User.findByIdAndUpdate(_id,{name}, {new:true})
+
+        res.status(200).json({message: "User data updated successfully", user})   
+      }catch(error){
+        return res.status(500).json({message:"Internal error"})
+      }
+}  
+
+export const updateUsersByuserId= async (req,res)=>{
+      const { userId }= req.params;
+      const { name } = req.body;
+      try{
+      const user = await User.findOneAndUpdate({ userId },{name}, {new:true})
+
+        res.status(200).json({message: "User data updated successfully", user})   
+      }catch(error){
+        return res.status(500).json({message:"Internal error", error: error.message})
+      }
+} 
+
+export const DeleteUserById = async (req,res)=>{
+    const { _id }= req.params;
+    try{
+        await User.findByIdAndDelete(_id);
+        res.status(200).json({message: "User data deleted successfully"})  
+    }catch(err){
+      return res.status(500).json({message:"Internal error"})
+    }
+}
