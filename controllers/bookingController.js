@@ -2,14 +2,14 @@ import mongoose from "mongoose";
 import Bookings from "../models/bookings.js";
 
 export const createBookings = async(req,res)=>{
-     const {bookingNumber, initialDest , finalDest}= req.body;
+     const {bookingNumber, initialDest , finalDest, booking_by}= req.body;
      try {
        let booking= await Bookings.findOne({bookingNumber});
        if(booking){
         return res.status(500).json({message:"Booking is already initiated"});
        }
        booking= new Bookings({
-       bookingNumber, initialDest , finalDest 
+       bookingNumber, initialDest , finalDest ,booking_by
      })
       await booking.save();
       return res.status(201).json({message:"Booking done successfully", booking})
@@ -49,4 +49,17 @@ export const deleteBookings = async(req,res) =>{
        } catch (error) {
         return res.status(500).json({message:"Internal error"})
        }
+}
+
+export const getBookingById = async(req,res)=>{
+   const {_id}=req.params;
+   try {
+        const booking = await Bookings.findById(_id);
+        if(!booking){
+           return res.status(404).json({message:"Booking not found"})
+        }
+        return res.status(200).json({message:"Booking details", booking})
+   } catch (error) {
+      return res.status(500).json({message:"Internal error"})
+   }
 }

@@ -1,4 +1,6 @@
+import bookings from "../models/bookings.js";
 import User from "../models/user.js";
+import Bookings from "../models/user.js";
 export const userRegister = async (req,res)=>{
     const {name , email, phone, password, userId}= req.body;
     try {
@@ -104,4 +106,43 @@ export const DeleteUserById = async (req,res)=>{
     }catch(err){
       return res.status(500).json({message:"Internal error"})
     }
+}
+
+export const getUsersById =async(req,res)=>{
+      const {_id}=req.params;
+      try {
+         const user= await User.findById(_id);
+         if(!user){
+             return res.status(404).json({message:"User not found"});
+         }
+         return res.status(200).json({message:"Users data",user})
+      } catch (error) {
+        return res.status(500).json({message:"Internal error"})
+      }
+}
+
+export const getUserByCustomId = async(req,res)=>{
+         const { id }= req.params;
+         try {
+             const user= await User.findOne({ id });
+             if(!user){
+               return res.status(404).json({message:"user not found"});
+             }
+             return res.status(200).json({message:"users data", user})
+         } catch (error) {
+          return res.status(500).json({message:"Internal error"})
+         }
+}
+
+export const allBookingsByUser = async(req,res)=>{
+      const {id} = req.params;
+      try {
+          const bookings= await Bookings.findOne({booking_by:id})
+          if(!bookings){
+             return res.status(404).json({message:"No bookings done by the user"})
+          }
+          return res.status(200).json({message:"Bookings by the user", bookings});
+      } catch (error) {
+        return res.status(500).json({message:"Internal error"})
+      }
 }

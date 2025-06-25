@@ -1,6 +1,7 @@
 import express from "express";
 import userRoute from "./routes/userRoute.js"
 import bookingRoute from "./routes/bookingRoute.js"
+import studentRoute from "./routes/studentRoute.js"
 import mongoose from "mongoose";
 import connectDB from "./db.js";
 import dotenv from "dotenv";
@@ -14,6 +15,7 @@ connectDB();
 
 app.use("/api",userRoute);
 app.use("/api",bookingRoute);
+app.use("/api",studentRoute);
 
 const PORT=process.env.PORT || 3000;
 app.listen(PORT,()=>{

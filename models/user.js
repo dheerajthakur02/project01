@@ -8,9 +8,7 @@ const UserSchmea= new mongoose.Schema({
     },
     id:{
        type:String ,
-       default: ()=>`user-${
-         uuidv4()
-       }`
+       default: ()=>`user-${uuidv4()}`
     },
     userId:{
         type:String,
