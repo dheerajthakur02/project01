@@ -38,6 +38,6 @@ export const StudentSchema = new mongoose.Schema({
         type:[String],
         default:""
     },
-})
+},{timestamps:true})
 
 export default mongoose.model("Student",StudentSchema)

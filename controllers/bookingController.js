@@ -63,3 +63,29 @@ export const getBookingById = async(req,res)=>{
       return res.status(500).json({message:"Internal error"})
    }
 }
+
+export const getBookingsByfilter= async(req,res)=>{
+       const {initialDest,finalDest}=req.query;
+       try {
+         let filter={};
+
+         if(initialDest){
+          filter.initialDest = new RegExp(initialDest,"i");
+         }
+
+         if(finalDest){
+            filter.finalDest = new RegExp(finalDest,"i");
+         }
+
+         const bookings = await Bookings.find(filter);
+         
+          if(!bookings){
+           return res.status(404).json({message:"Booking not found"})
+          }
+         
+           return res.status(200).json({message:"Booking details", bookings})
+       } catch (error) {
+         return res.status(500).json({message:"Internal error"})
+       }
+
+}

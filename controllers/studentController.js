@@ -80,12 +80,15 @@ export const updateStudentsDetails= async (req,res)=>{
       const {name,phone} = req.body;
       try{
        const student=await Student.findOneAndUpdate({ id } ,{name, phone}, {new:true});
+       if(!student){
+        return res.status(200).json({message:"The student is not found"});
+       }
+  
        res.status(200).json({message: "student data updated successfully", student});  
       }catch(error){
         return res.status(500).json({message:"Internal error"})
       }
 }  
-
 export const DeleteStudentById = async (req,res)=>{
     const { id }= req.params;
     try{
@@ -110,4 +113,47 @@ export const getStudentById = async(req,res)=>{
     } catch (error) {
       return res.status(500).json({message:"Internal error"})
     }
+}
+
+export const getStudentsUsingFilter= async(req,res)=>{
+     const {name, email, regNumber} = req.query;
+     try {
+         let filter={};
+        if(name){
+          filter.name= new RegExp(name,"i");
+        }
+        if(email){
+          filter.email=email;
+        }
+
+        const students = await Student.find(filter);
+        if(!students){
+               return res.status(404).json({message:"user not found"});
+             }
+         return res.status(200).json({
+        message:"Student details",
+        students
+      })
+     } catch (error) {
+      return res.status(500).json({message:"Internal error"})
+     }
+}
+
+
+export const updateStduentUsingFilter = async (req,res)=>{
+       const {regNumber}= req.query;
+       const {name, phone}= req.body;
+       try {
+        let filter={};
+        if(regNumber){
+            filter.regNumber=regNumber;
+        }
+        const student=await Student.findOneAndUpdate({ regNumber } ,{name, phone}, {new:true});
+        if(!student){
+           return res.status(200).json({message:"The student is not found"});
+        }
+        res.status(200).json({message: "student data updated successfully", student});  
+       } catch (error) {
+         return res.status(500).json({message:"Internal error"})
+       }
 }
