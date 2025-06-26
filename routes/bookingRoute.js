@@ -1,10 +1,11 @@
 import express from "express";
-import { createBookings, updateBookings,getAllBookings, deleteBookings,getBookingById,getBookingsByfilter,filterBookingsByDate } from "../controllers/bookingController.js";
+import { createBookings, updateBookings,getAllBookings, deleteBookings,getBookingById,getBookingsByfilter,filterBookingsByDate,newUpdateBookings } from "../controllers/bookingController.js";
 const route = express.Router();
 
-route.post("/make-bookings", createBookings);
+route.post("/make-bookings",createBookings);
 route.get("/all-bookings",getAllBookings);
 route.put("/update-bookings/:bookingId",updateBookings);
+route.put("/update-bookings-customId/:bookingId",newUpdateBookings)
 route.delete("/deleteById/:_id",deleteBookings);
 route.get("/get-bookings-by-user/:_id",getBookingById);
 route.get("/get-bookings-by-filter",getBookingsByfilter);

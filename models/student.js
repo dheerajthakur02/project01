@@ -17,7 +17,7 @@ export const StudentSchema = new mongoose.Schema({
         type:String,
         unique:true
     },
-     id:{
+     newId:{
        type:String ,
        default: ()=>`student-${uuidv4()}`
     },

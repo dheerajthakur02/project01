@@ -157,3 +157,15 @@ export const updateStduentUsingFilter = async (req,res)=>{
          return res.status(500).json({message:"Internal error"})
        }
 }
+
+
+export const newupdateStudentByCutomId = async(req,res)=>{
+    const { id } = req.params;
+    const {name, phone} = req.body;
+    try {
+      const student = await Student.findOneAndUpdate({ id }, {name,phone}, {new: true})
+      return res.status(200).json({message:"Booking updated successfully", student})
+    } catch (error) {
+        return res.status(500).json({message:"Internal error"})
+    }
+}

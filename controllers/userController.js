@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import bookings from "../models/bookings.js";
 import User from "../models/user.js";
 import Bookings from "../models/user.js";
@@ -39,16 +40,16 @@ export const userLogin = async (req,res)=>{
             message:"User not found, please register first"
           })
         } 
-        if(password==user.password){
-          return res.status(200).json({
-            message:"logged in successfully",
-            user
-        })
-        }else
-        {
-          return res.status(404).json({
-            message:"incorrect password",
-        })  
+        if(!password){
+          return res.status(500).json({message:"password is missing"});
+        }
+
+        const isMatch = await bcrypt.compare(password,user.password)
+
+        if(isMatch){
+          return res.status(200).json({message:"Logged in successfully",user})
+        }else{
+          return res.status(404).json({message:"password is incorrect"});
         }
     } catch (error) {
         res.status(500).json({

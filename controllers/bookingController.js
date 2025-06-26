@@ -44,6 +44,16 @@ export const updateBookings = async(req,res)=>{
     }
 }
 
+export const newUpdateBookings = async(req,res)=>{
+    const { id } = req.params;
+    const {initialDest, finalDest} = req.body;
+    try {
+      const booking = await Bookings.findOneAndUpdate({ id }, {initialDest,finalDest}, {new: true})
+      return res.status(200).json({message:"Booking updated successfully", booking})
+    } catch (error) {
+        return res.status(500).json({message:"Internal error"})
+    }
+}
 export const deleteBookings = async(req,res) =>{
        const { _id } = req.params;
        try {
