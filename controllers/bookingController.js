@@ -2,14 +2,17 @@ import mongoose from "mongoose";
 import Bookings from "../models/bookings.js";
 
 export const createBookings = async(req,res)=>{
-     const {bookingNumber, initialDest , finalDest, booking_by}= req.body;
+     const {initialDest , finalDest,bookedBy,bookingAmount}= req.body;
      try {
-       let booking= await Bookings.findOne({bookingNumber});
-       if(booking){
-        return res.status(500).json({message:"Booking is already initiated"});
-       }
-       booking= new Bookings({
-       bookingNumber, initialDest , finalDest ,booking_by
+      //  let booking= await Bookings.findOne({bookingNumber});
+      //  if(booking){
+      //   return res.status(500).json({message:"Booking is already initiated"});
+      //  }
+       const booking= new Bookings({
+       initialDest,
+       finalDest,
+       bookedBy,
+       bookingAmount
      })
       await booking.save();
       return res.status(201).json({message:"Booking done successfully", booking})
@@ -31,10 +34,10 @@ export const getAllBookings = async(req,res)=>{
 }
 
 export const updateBookings = async(req,res)=>{
-    const { _id } = req.params;
+    const { id } = req.params;
     const {initialDest, finalDest} = req.body;
     try {
-      const booking = await Bookings.findByIdAndUpdate({ _id }, {initialDest,finalDest}, {new: true})
+      const booking = await Bookings.findOneAndUpdate({ id }, {initialDest,finalDest}, {new: true})
       return res.status(200).json({message:"Booking updated successfully", booking})
     } catch (error) {
         return res.status(500).json({message:"Internal error"})
@@ -88,4 +91,26 @@ export const getBookingsByfilter= async(req,res)=>{
          return res.status(500).json({message:"Internal error"})
        }
 
+}
+
+export const filterBookingsByDate = async (req,res) =>{
+        const {startDate, endDate}= req.query;
+        try {
+             let filter={};
+             if(startDate && endDate){
+               const start= new Date(`${startDate} 00:00:00`);
+               const end= new Date(`${endDate} 23:59:59`);
+               filter.createdAt = {
+                 $gte:start,
+                 $lte:end
+               };
+             }
+            const bookings = await Bookings.find(filter);
+            if(!bookings){
+                return res.status(404).json({message:"Booking not found"})
+            }
+            return res.status(200).json({message:"Booking details", bookings})
+        } catch (error) {
+        return res.status(500).json({message:"Internal error"})
+        }
 }
