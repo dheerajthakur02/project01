@@ -15,10 +15,6 @@ const BookingSchema=new mongoose.Schema({
       type:String,
       required:true,
       default:""
-   },
-   booking_by:{
-      type:String,
-      default:""
    }
 })
 export default mongoose.model("Booking",BookingSchema);

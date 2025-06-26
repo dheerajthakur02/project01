@@ -134,15 +134,23 @@ export const getUserByCustomId = async(req,res)=>{
          }
 }
 
-export const allBookingsByUser = async(req,res)=>{
-      const {id} = req.params;
-      try {
-          const bookings= await Bookings.findOne({booking_by:id})
-          if(!bookings){
-             return res.status(404).json({message:"No bookings done by the user"})
+
+export const filterUser = async(req,res)=>{
+        const {name, email}=req.query;
+        try {
+          let filter={};
+          if(name){
+              filter.name = new RegExp(name, "i"); 
           }
-          return res.status(200).json({message:"Bookings by the user", bookings});
-      } catch (error) {
-        return res.status(500).json({message:"Internal error"})
-      }
+          if(email){
+               filter.email = email;
+          }
+          const user = await User.find(filter);
+          if(!user){
+               return res.status(404).json({message:"user not found"});
+             }
+          return res.status(200).json({message:"users data", user})
+        } catch (error) {
+          return res.status(500).json({message:"Internal error"})
+        }
 }
